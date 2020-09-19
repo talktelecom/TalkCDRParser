@@ -23,5 +23,5 @@ node parser.js /CDR/Claro/CDR.txt 1
 ```
 No exemplo acima esta sendo fornecido dois parametros para o programa. O primeiro é o path do arquivo e o segundo o codigo do layout.
 
-Após o termino da execução, será apresentado no console a quantidade de linhas lidas e a data de termino do processamento. Na mesma pasta do arquivo fornecedido como paratro será gerado um arquivo de saida com o nome origina + .parsed.txt. Ex: CDR.txt.parsed.txt
+Após o termino da execução, será apresentado no console a quantidade de linhas lidas e a data de termino do processamento. Na mesma pasta do arquivo fornecedido como paratro será gerado um arquivo de saida com o nome original + .parsed.txt. Ex: CDR.txt.parsed.txt
 
