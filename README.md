@@ -8,11 +8,11 @@ Pré Requisitos:
 - Git
 
 Codigos de Layouts Implementados
-- Claro
-- OI
-- IPCorp
-- TalkTelecom
-- OI-CSV
+- 1 - Claro
+- 2 - OI
+- 3 - IPCorp
+- 4 - TalkTelecom
+- 5 - OI-CSV
 
 Execute os comandos abaixo no terminal de sua preferencia
 ```
