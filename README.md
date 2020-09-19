@@ -25,3 +25,10 @@ No exemplo acima esta sendo fornecido dois parametros para o programa. O primeir
 
 Após o termino da execução, será apresentado no console a quantidade de linhas lidas e a data de termino do processamento. Na mesma pasta do arquivo fornecedido como paratro será gerado um arquivo de saida com o nome original + .parsed.txt. Ex: CDR.txt.parsed.txt
 
+Layout do arquivo de saida
+
+telefone;data;duracao;valor;classe;tipo
+32069413;06-03-2020 05:39:26;0000060;0.01;LDN;Fixo
+37627570;09-03-2020 02:29:49;0000036;0;LDN;Fixo
+37627570;09-03-2020 04:48:57;0000030;0;LDN;Fixo
+
