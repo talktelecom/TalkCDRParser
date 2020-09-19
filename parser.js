@@ -6,8 +6,8 @@ const oi = require('./operadoras/oi');
 const ipcorp = require('./operadoras/ipcorp');
 const talktelecom = require('./operadoras/talktelecom');
 
-var file = "/Users/valdez.bonfim/CDR/CDR-IPCORP-JUN-20.txt";
-var layout = 3;
+var file = "/Users/valdez.bonfim/CDR/CONTA-372024000-202004-SP.TXT";
+var layout = 5;
 var lineIndex = 0;
 
 if(process.argv.length > 2)
@@ -21,6 +21,7 @@ var stream = fs.createWriteStream(file + '.parsed.csv', {flags: 'a'});
 
 try {
     if (fs.existsSync(file) && layout > 0) {
+        console.log(`Start Time: ${moment(`${new Date()}`).format('DD-MM-YYYY HH:mm:ss')}`)
         lineReader.eachLine(file, function(line) {
             lineIndex++;
             process.stdout.write(`\rProcessing Line ${lineIndex}`);
@@ -40,7 +41,8 @@ try {
                     talktelecom.Parse(line, stream);
             }
             else if(layout == 5){ // oi-csv
-                ipcorp.ParseCSV(line, stream);
+                if(lineIndex > 1) // pula o header
+                oi.ParseCSV(line, stream);
             }
         });
 
