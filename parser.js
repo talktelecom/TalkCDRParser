@@ -5,6 +5,7 @@ const claro = require('./operadoras/claro');
 const oi = require('./operadoras/oi');
 const ipcorp = require('./operadoras/ipcorp');
 const talktelecom = require('./operadoras/talktelecom');
+const { exception } = require('console');
 
 var file = "/Users/valdez.bonfim/CDR/CONTA-372024000-202004-SP.TXT";
 var layout = 5;
@@ -21,10 +22,10 @@ var stream = fs.createWriteStream(file + '.parsed.csv', {flags: 'a'});
 
 try {
     if (fs.existsSync(file) && layout > 0) {
-        console.log(`Start Time: ${moment(`${new Date()}`).format('DD-MM-YYYY HH:mm:ss')}`)
+        console.log(`Start Time: ${moment(`${new Date()}`).format('DD-MM-YYYY HH:mm:ss')}`);
         lineReader.eachLine(file, function(line) {
             lineIndex++;
-            process.stdout.write(`\rProcessing Line ${lineIndex}`);
+            process.stdout.write(`\rProcessing Line ${lineIndex} ${moment(`${new Date()}`).format('HH:mm:ss')}`);
 
             if(layout == 1){ // claro
                 claro.Parse(line, stream);
@@ -45,11 +46,9 @@ try {
                 oi.ParseCSV(line, stream);
             }
         });
-
-        process.stdout.write(`\rProcesso finalizado. Linhas processadas ${lineIndex}`);
     }
     else{
-        console.log(`arquivo não encontrado: ${file}`);
+        console.log(`File not found: ${file}`);
     }
   } catch(err) {
     console.error(err)
