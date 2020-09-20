@@ -1,5 +1,5 @@
 const moment = require('moment');
-async function Parse(line, stream){
+function Parse(line, stream){
 
     if(line.substr(0,1) == "3"){
         let telefoneDestino = line.substr(156 - 1, 14).trimEnd();
@@ -14,7 +14,7 @@ async function Parse(line, stream){
         let classe = line.substr(178 - 1, 3);
         let tipo = telefoneDestino.length == 11 ? 'Movel' : 'Fixo';
         var dataFormatada = moment(`${data}T${horario}`).format('DD-MM-YYYY hh:mm:ss');
-        await stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`);
+        stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`);
     }
 }
 
