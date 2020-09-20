@@ -8,8 +8,6 @@ function Parse(line, stream){
         if(telefoneDestino.length > 11)
             telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
 
-        telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
-
         let dataFormatada = columns[9].substr(0, 19)
         let duracaoFormatada = columns[17].substr(0, 8);
 
