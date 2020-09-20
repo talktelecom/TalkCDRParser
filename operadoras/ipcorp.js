@@ -1,5 +1,5 @@
 const moment = require('moment');
-async function Parse(line, stream){
+function Parse(line, stream){
     var columns = line.split(";");
     // 0:'IDIPCORP'
     // 1:'FATURA'
@@ -36,7 +36,7 @@ async function Parse(line, stream){
         let valor = parseFloat(columns[19]);
         let classe = columns[17];
         let tipo = columns[17] == 'M' ? 'Movel' : 'Fixo';
-        await stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`);
+        stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
     }
 }
 

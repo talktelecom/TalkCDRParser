@@ -3,7 +3,9 @@ function Parse(line, stream){
 
     if(line.substr(0,2) == "30"){
         let telefoneDestino = line.substr(164-1, 17).trimEnd();
-        telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
+        
+        if(telefoneDestino.length > 11)
+            telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
         
         let data = line.substr(100 - 1, 8);
         let horario = line.substr(227 - 1, 6);

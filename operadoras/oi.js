@@ -3,7 +3,10 @@ async function Parse(line, stream){
 
     if(line.substr(0,1) == "3"){
         let telefoneDestino = line.substr(156 - 1, 14).trimEnd();
-        telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
+
+        if(telefoneDestino.length > 11)
+            telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
+            
         let data = line.substr(89 - 1, 8);
         let horario = line.substr(231 - 1, 6);
         let duracao = (parseFloat(line.substr(172 - 1, 6)) / 10) * 60; // operadora envia informação em decimos de segundos
@@ -15,7 +18,7 @@ async function Parse(line, stream){
     }
 }
 
-async function ParseCSV(line, stream){
+function ParseCSV(line, stream){
    
 // 0:' UF'
 // 1:'FATURA'
@@ -88,7 +91,7 @@ async function ParseCSV(line, stream){
         let valor = parseFloat(columns[19].replace(/\,/g, "."));
         let classe = columns[18];
         let tipo = columns[18] = 'DDD' ? 'Fixo' : 'Movel';
-        await stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`);
+        stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
     }
 }
 
