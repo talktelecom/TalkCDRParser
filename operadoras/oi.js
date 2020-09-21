@@ -1,21 +1,25 @@
 const moment = require('moment');
-async function Parse(line, stream){
+function Parse(line, stream){
 
+    var bilhete = {};
     if(line.substr(0,1) == "3"){
         let telefoneDestino = line.substr(156 - 1, 14).trimEnd();
 
         if(telefoneDestino.length > 11)
             telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
-            
-        let data = line.substr(89 - 1, 8);
-        let horario = line.substr(231 - 1, 6);
-        let duracao = (parseFloat(line.substr(172 - 1, 6)) / 10) * 60; // operadora envia informação em decimos de segundos
-        let valor = parseFloat(line.substr(272 - 1, 13)) / 100.;
-        let classe = line.substr(178 - 1, 3);
-        let tipo = telefoneDestino.length == 11 ? 'Movel' : 'Fixo';
-        var dataFormatada = moment(`${data}T${horario}`).format('DD-MM-YYYY hh:mm:ss');
-        await stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`);
+
+        bilhete.telefoneDestino = telefoneDestino;
+
+        bilhete.data = line.substr(89 - 1, 8);
+        bilhete.horario = line.substr(231 - 1, 6);
+        bilhete.duracao = (parseFloat(line.substr(172 - 1, 6)) / 10) * 60; // operadora envia informação em decimos de segundos
+        bilhete.valor = parseFloat(line.substr(272 - 1, 13)) / 100.;
+        bilhete.classe = line.substr(178 - 1, 3);
+        bilhete.tipo = telefoneDestino.length == 11 ? 'Movel' : 'Fixo';
+        bilhete.dataFormatada = moment(`${data}T${horario}`).format('DD-MM-YYYY hh:mm:ss');
+        // stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`);
     }
+    return bilhete;
 }
 
 function ParseCSV(line, stream){
@@ -67,7 +71,7 @@ function ParseCSV(line, stream){
 // 44:'NRC   
 
     var columns = line.split(";");
-
+    var bilhete = {};
     if(columns.length == 45){
         let telefoneDestino = columns[15].trim();
 
@@ -93,6 +97,7 @@ function ParseCSV(line, stream){
         let tipo = columns[18] = 'DDD' ? 'Fixo' : 'Movel';
         stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
     }
+    return bilhete;
 }
 
 module.exports = {

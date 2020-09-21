@@ -21,23 +21,27 @@ function Parse(line, stream){
     // 17:'TIPO' 
     // 18:'DURACAO_TARIFADA'
     // 19:'PRECO'
+
+    var bilhete = {};
     if(columns.length == 20){
         let telefoneDestino = columns[9].trim();
 
         if(telefoneDestino.length > 11)
             telefoneDestino = telefoneDestino.length == 13 ? telefoneDestino.substr(2, 11) : telefoneDestino.substr(2, 10); //remove o codigo de pais caso tenha;
 
-        let dataFormatada = columns[10].substr(0, 19)
-        let duracaoFormatada = columns[18].substr(0, 8);
+        bilhete.telefoneDestino = telefoneDestino;
+        bilhetedataFormatada = columns[10].substr(0, 19)
+        bilheteduracaoFormatada = columns[18].substr(0, 8);
 
         var a = duracaoFormatada.split(':');
-        var duracao = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); //coverte o formato hh:mm:ss para duracao em segundos.
+        bilheteduracao = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); //coverte o formato hh:mm:ss para duracao em segundos.
 
-        let valor = parseFloat(columns[19]);
-        let classe = columns[17];
-        let tipo = columns[17] == 'M' ? 'Movel' : 'Fixo';
-        stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
+        bilhetevalor = parseFloat(columns[19]);
+        bilheteclasse = columns[17];
+        bilhetetipo = columns[17] == 'M' ? 'Movel' : 'Fixo';
+        // stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
     }
+    return bilhete;
 }
 
 module.exports = {

@@ -1,14 +1,22 @@
+'use strict'
 const moment = require('moment');
 const lineReader = require('line-reader');
 const fs = require('fs');
+
+require('array.prototype.flatmap').shim()
+const { Client } = require('@elastic/elasticsearch')
+const client = new Client({
+  node: 'http://elastic:changeme@172.16.1.174:9200'
+})
+
 const claro = require('./operadoras/claro');
 const oi = require('./operadoras/oi');
 const ipcorp = require('./operadoras/ipcorp');
 const talktelecom = require('./operadoras/talktelecom');
-const { exception } = require('console');
 
-var file = "/Users/valdez.bonfim/CDR/Faturas-Operadoras-Claro.txt";
-var layout = 1;
+var uuid = require('uuid');
+var file = "/Users/valdez.bonfim/CDR/CDR_AMA_TALK_JUL.txt";
+var layout = 4;
 var lineIndex = 0;
 
 if(process.argv.length > 2)
@@ -17,41 +25,68 @@ if(process.argv.length > 2)
 if(process.argv.length > 3)
     layout = process.argv[3];
 
-fs.unlink(file + '.parsed.csv', ()=>{ });
-var stream = fs.createWriteStream(file + '.parsed.csv', {flags: 'a'}); 
-stream.write(`telefone;data;duracao;valor;classe;tipo\n`,()=>{});
+var bilhetes = [];
 
+async function run () {
 
-try {
     if (fs.existsSync(file) && layout > 0) {
-        console.log(`Start Time: ${moment(`${new Date()}`).format('DD-MM-YYYY HH:mm:ss')}`);
-        lineReader.eachLine(file, function(line) {
+        lineReader.eachLine(file,async (line)=>{
             lineIndex++;
-            process.stdout.write(`\rProcessing Line ${lineIndex} ${moment(`${new Date()}`).format('HH:mm:ss')}`);
+            process.stdout.write(`\rProcessing Line ${lineIndex}`);
+            var bilhete = {};
 
             if(layout == 1){ // claro
-                claro.Parse(line, stream);
+                bilhete = claro.Parse(line);
             }
             else if(layout == 2){ // oi 
-                oi.Parse(line, stream);
+                bilhete = oi.Parse(line);
             }
             else if(layout == 3){ // ipcorp
                 if(lineIndex > 1) // pula o header
-                    ipcorp.Parse(line, stream);
+                bilhete = ipcorp.Parse(line);
             }
             else if(layout == 4){ // talktelecom
                 if(lineIndex > 1) // pula o header
-                    talktelecom.Parse(line, stream);
+                    bilhete = talktelecom.Parse(line);
             }
             else if(layout == 5){ // oi-csv
                 if(lineIndex > 1) // pula o header
-                oi.ParseCSV(line, stream);
+                    bilhete = oi.ParseCSV(line);
+            }
+
+            if(bilhete.telefoneDestino){
+                bilhete.id = uuid.v1();
+                bilhetes.push(bilhete);
+            }
+
+            if(bilhetes.length >= 1000){
+                const body = bilhetes.flatMap(doc => [{ index: { _index: 'bilhetetalk' } }, doc]);
+
+                const { body: bulkResponse } = await client.bulk({ refresh: true, body })
+
+                if (bulkResponse.errors) {
+                    const erroredDocuments = []
+                    bulkResponse.items.forEach((action, i) => {
+                        const operation = Object.keys(action)[0]
+                        if (action[operation].error) {
+                        erroredDocuments.push({
+                            status: action[operation].status,
+                            error: action[operation].error,
+                            operation: body[i * 2],
+                            document: body[i * 2 + 1]
+                        })
+                        }
+                    })
+                    console.log(erroredDocuments)
+                }
+
+                const { body: count } = await client.count({ index: 'tweets' })
+                console.log(count);
+                bilhetes = [];
             }
         });
     }
-    else{
-        console.log(`File not found: ${file}`);
-    }
-  } catch(err) {
-    console.error(err)
-  }
+
+}
+
+run().catch(console.log)
