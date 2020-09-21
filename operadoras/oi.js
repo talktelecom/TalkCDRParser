@@ -10,11 +10,10 @@ function Parse(line, stream){
         let data = line.substr(89 - 1, 8);
         let horario = line.substr(231 - 1, 6);
         let duracao = (parseFloat(line.substr(172 - 1, 6)) / 10) * 60; // operadora envia informação em decimos de segundos
-        let valor = parseFloat(line.substr(272 - 1, 13)) / 100.;
         let classe = line.substr(178 - 1, 3);
         let tipo = telefoneDestino.length == 11 ? 'Movel' : 'Fixo';
         var dataFormatada = moment(`${data}T${horario}`).format('DD-MM-YYYY hh:mm:ss');
-        stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`);
+        stream.write(`${telefoneDestino};${dataFormatada};${duracao};0;${classe};${tipo}\n`);
     }
 }
 
@@ -87,11 +86,9 @@ function ParseCSV(line, stream){
         let duracaoFormatada = columns[20].substr(0, 8);
         var a = duracaoFormatada.split(':');
         var duracao = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); //coverte o formato hh:mm:ss para duracao em segundos.
-
-        let valor = parseFloat(columns[19].replace(/\,/g, "."));
         let classe = columns[18];
         let tipo = columns[18] = 'DDD' ? 'Fixo' : 'Movel';
-        stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
+        stream.write(`${telefoneDestino};${dataFormatada};${duracao};0;${classe};${tipo}\n`,()=>{});
     }
 }
 

@@ -1,26 +1,7 @@
 const moment = require('moment');
 function Parse(line, stream){
     var columns = line.split(";");
-    // 0:'IDIPCORP'
-    // 1:'FATURA'
-    // 2:'TG20'
-    // 3:'TG20NOME'
-    // 4:'TG40'
-    // 5:'TG40NOME'
-    // 6:'BILHETADOR'
-    // 7:'CICLO_FATURAMENTO'
-    // 8:'NA'
-    // 9:'NB'
-    // 10:'DATA_INICIO'
-    // 11:'DATA_ATENDIMENTO'
-    // 12:'DATA_DESCONEXAO'
-    // 13:'RELCAUSE'
-    // 14:'CHARGE'
-    // 15:'FDS'
-    // 16:'CADENCIA'
-    // 17:'TIPO' 
-    // 18:'DURACAO_TARIFADA'
-    // 19:'PRECO'
+    
     if(columns.length == 20){
         let telefoneDestino = columns[9].trim();
 
@@ -32,11 +13,9 @@ function Parse(line, stream){
 
         var a = duracaoFormatada.split(':');
         var duracao = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); //coverte o formato hh:mm:ss para duracao em segundos.
-
-        let valor = parseFloat(columns[19]);
         let classe = columns[17];
         let tipo = columns[17] == 'M' ? 'Movel' : 'Fixo';
-        stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
+        stream.write(`${telefoneDestino};${dataFormatada};${duracao};0;${classe};${tipo}\n`,()=>{});
     }
 }
 
