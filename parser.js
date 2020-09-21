@@ -25,12 +25,12 @@ if(process.argv.length > 2)
 if(process.argv.length > 3)
     layout = process.argv[3];
 
-var bilhetes = [];
+
 
 async function run () {
-
+var bilhetes = [];
     if (fs.existsSync(file) && layout > 0) {
-        lineReader.eachLine(file,async (line)=>{
+        await lineReader.eachLine(file,async (line)=>{
             lineIndex++;
             process.stdout.write(`\rProcessing Line ${lineIndex}`);
             var bilhete = {};
@@ -59,29 +59,33 @@ async function run () {
                 bilhetes.push(bilhete);
             }
 
-            if(bilhetes.length >= 1000){
-                const body = bilhetes.flatMap(doc => [{ index: { _index: 'bilhetetalk' } }, doc]);
+            if(lineIndex % 1000 == 0){
+                
+                
+                const body = bilhetes.flatMap(doc => [{ index: { _index: 'bilhetestalk05' } }, doc]);
 
                 const { body: bulkResponse } = await client.bulk({ refresh: true, body })
-
+                console.log(bulkResponse)
+                
                 if (bulkResponse.errors) {
-                    const erroredDocuments = []
-                    bulkResponse.items.forEach((action, i) => {
-                        const operation = Object.keys(action)[0]
-                        if (action[operation].error) {
-                        erroredDocuments.push({
-                            status: action[operation].status,
-                            error: action[operation].error,
-                            operation: body[i * 2],
-                            document: body[i * 2 + 1]
-                        })
-                        }
-                    })
+                    // const erroredDocuments = []
+                    // bulkResponse.items.forEach((action, i) => {
+                    //     const operation = Object.keys(action)[0]
+                    //     if (action[operation].error) {
+                    //     erroredDocuments.push({
+                    //         status: action[operation].status,
+                    //         error: action[operation].error,
+                    //         operation: body[i * 2],
+                    //         document: body[i * 2 + 1]
+                    //     })
+                    //     }
+                    // })
                     console.log(erroredDocuments)
                 }
 
-                const { body: count } = await client.count({ index: 'tweets' })
-                console.log(count);
+                const { body: elastic } = await client.count({ index: 'bilhetestalk05' })
+                console.log(`quantidade bilhtes:${bilhetes.length} | quantidade do body: ${body.length} | quantidade do elastic: ${elastic.count}`);
+
                 bilhetes = [];
             }
         });
