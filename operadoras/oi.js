@@ -82,7 +82,7 @@ function ParseCSV(line, stream){
         if (horario == "000000")
             horario = "00:00:00";
         
-        var dataFormatada = moment(`${data}T${horario}`).format('DD-MM-YYYY hh:mm:ss');
+        var dataFormatada = moment(`${data}T${horario}`).format('YYYY-MM-DD HH:mm:ss');
 
         let duracaoFormatada = columns[20].substr(0, 8);
         var a = duracaoFormatada.split(':');

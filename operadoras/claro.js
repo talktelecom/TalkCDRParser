@@ -13,7 +13,7 @@ function Parse(line, stream){
         let valor = parseFloat(line.substr(238 - 1, 13)) / 100.;
         let classe = line.substr(199 - 1, 3);
         let tipo = telefoneDestino.length == 11 ? 'Movel' : 'Fixo';
-        var dataFormatada = moment(`${data}T${horario}`).format('DD-MM-YYYY hh:mm:ss');
+        var dataFormatada = moment(`${data}T${horario}`).format('YYYY-MM-DD HH:mm:ss');
         stream.write(`${telefoneDestino};${dataFormatada};${duracao};${valor};${classe};${tipo}\n`,()=>{});
     }
 }
